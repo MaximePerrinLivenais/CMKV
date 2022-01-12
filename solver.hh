@@ -4,11 +4,11 @@
 
 class Solver
 {
-    public:
-        explicit Solver(const shared_tetravex tetravex);
+public:
+    explicit Solver(const shared_tetravex tetravex);
 
-        void solve();
+    void solve();
 
-    private:
-        shared_tetravex game;
+private:
+    shared_tetravex game;
 };

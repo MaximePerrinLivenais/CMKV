@@ -13,12 +13,8 @@ Tile::Tile(char top, char left, char right, char bottom, bool movable)
 
 void Tile::print() const
 {
-    std::cout << (char)(top + '0')
-                << (char)(left + '0')
-                << (char)(right + '0')
-                << (char)(bottom + '0')
-                << movable
-                << '\n';
+    std::cout << (char)(top + '0') << (char)(left + '0') << (char)(right + '0')
+              << (char)(bottom + '0') << movable << '\n';
 }
 
 shared_tile Tile::parse_from_line(const std::string& line)
@@ -27,11 +23,10 @@ shared_tile Tile::parse_from_line(const std::string& line)
     char left = line[1];
     char right = line[2];
     char bottom = line[3];
-    bool movable = line.length() > 4;
+    bool movable = line.length() <= 4;
 
     return std::make_shared<Tile>(top, left, right, bottom, movable);
 }
-
 
 std::vector<shared_tile> Tile::parse_from_file(const char* filepath)
 {
@@ -49,40 +44,45 @@ std::vector<shared_tile> Tile::parse_from_file(const char* filepath)
     return vec;
 }
 
-const std::string Tile::get_top_line() const
+std::string Tile::get_top_line() const
 {
     const std::string spacing = "  ";
     return spacing + top + spacing;
 }
 
-const std::string Tile::get_center_line() const
+std::string Tile::get_center_line() const
 {
     const std::string spacing = " ";
     return spacing + left + spacing + right + spacing;
 }
 
-const std::string Tile::get_bottom_line() const
+std::string Tile::get_bottom_line() const
 {
     const std::string spacing = "  ";
     return spacing + bottom + spacing;
 }
 
-const char Tile::get_top() const
+char Tile::get_top() const
 {
     return top;
 }
 
-const char Tile::get_left() const
+char Tile::get_left() const
 {
     return left;
 }
 
-const char Tile::get_right() const
+char Tile::get_right() const
 {
     return right;
 }
 
-const char Tile::get_bottom() const
+char Tile::get_bottom() const
 {
     return bottom;
+}
+
+bool Tile::get_movable() const
+{
+    return movable;
 }

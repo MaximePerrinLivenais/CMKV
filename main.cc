@@ -1,6 +1,6 @@
-#include "solver.hh"
-
 #include <iostream>
+
+#include "solver.hh"
 
 int main(int argc, char* argv[])
 {
