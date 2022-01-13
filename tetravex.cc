@@ -25,7 +25,7 @@ shared_tetravex Tetravex::swap_tiles(const size_t first_index,
 
 bool Tetravex::is_tile_movable(const size_t index) const
 {
-    return tiles[index]->get_movable();
+    return tiles.at(index)->get_movable();
 }
 
 int Tetravex::cost() const
