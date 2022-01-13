@@ -13,9 +13,9 @@ public:
 
 private:
     shared_tetravex generate_random_state(shared_tetravex game);
-    bool is_temperature_uniform(float T, shared_tetravex game);
+    bool is_temperature_uniform(double T, shared_tetravex game);
     double uniform_draw();
-    float init_temperature();
+    double init_temperature();
 
 private:
     shared_tetravex game;

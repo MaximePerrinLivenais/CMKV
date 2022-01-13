@@ -36,10 +36,10 @@ double Solver::uniform_draw()
     return real_distribution_(random_generator_);
 }
 
-bool Solver::is_temperature_uniform(float temperature, shared_tetravex game)
+bool Solver::is_temperature_uniform(double temperature, shared_tetravex game)
 {
-    float nb_change = 0;
-    float nb_iteration = 20;
+    double nb_change = 0;
+    double nb_iteration = 100;
 
     for (size_t i = 0; i < nb_iteration; i++)
     {
@@ -51,15 +51,15 @@ bool Solver::is_temperature_uniform(float temperature, shared_tetravex game)
             nb_change += 1;
     }
 
-    return (nb_change / nb_iteration) > 0.9;
+    return (nb_change / nb_iteration) > 0.95;
 }
 
-float Solver::init_temperature()
+double Solver::init_temperature()
 {
-    float Tmin = 0.1;
-    float Tmax = 500;
+    double Tmin = 0.01;
+    double Tmax = 1000;
 
-    float T = (Tmax + Tmin) / 2;
+    double T = (Tmax + Tmin) / 2;
 
     while (Tmax - Tmin > 0.1)
     {
@@ -76,36 +76,54 @@ float Solver::init_temperature()
 
 shared_tetravex Solver::solve()
 {
-    float temperature = init_temperature();
-    std::cout << "initial temperature = " << temperature << "\n";
-    float cooling_coeff = 0.999999;
+    double base_temperature = init_temperature();
+
+    std::cout << "initial temperature = " << base_temperature << "\n";
+    double cooling_coeff = 0.50;
 
     auto energy = game->cost();
 
-    while (game->cost() > 0)
+    while (energy > 0)
     {
-        std::cout << "========\n";
-        auto random_state = generate_random_state(game);
-        auto random_state_energy = random_state->cost();
-        auto trans_proba =
-            std::exp(-std::abs(random_state_energy - energy) / temperature);
-        auto draw = uniform_draw();
+        size_t count_no_change = 0;
+        double temperature = base_temperature;
+        std::cout << "cooling coef = " << cooling_coeff << "\n";
+        std::cout << "current energy = " << energy << "\n";
 
-        std::cout << "energy: " << energy
-                  << ", new_state energy: " << random_state_energy << "\n";
-
-        std::cout << "transition proba: " << trans_proba << ", draw: " << draw
-                  << "\n";
-
-        if (random_state_energy < energy || trans_proba > draw)
+        while (energy > 0 && count_no_change < 1000)
         {
-            game = random_state;
-            energy = random_state_energy;
-            std::cout << "accepted new state\n";
+            // std::cout << "========\n";
+            auto random_state = generate_random_state(game);
+            auto random_state_energy = random_state->cost();
+            auto trans_proba =
+                std::exp(-std::abs(random_state_energy - energy) / temperature);
+
+            auto draw = uniform_draw();
+
+            // std::cout << "energy: " << energy
+            //           << ", new_state energy: " << random_state_energy <<
+            //           "\n";
+
+            // std::cout << "transition proba: " << trans_proba
+            //           << ", draw: " << draw << "\n";
+
+            if (random_state_energy < energy || trans_proba > draw)
+            {
+                game = random_state;
+                energy = random_state_energy;
+                count_no_change = 0;
+                // std::cout << "accepted new state\n";
+            }
+            else
+            {
+                count_no_change++;
+            }
+
+            temperature *= cooling_coeff;
+            // std::cout << "temperature = " << temperature << "\n";
         }
 
-        temperature *= cooling_coeff;
-        std::cout << "temperature = " << temperature << "\n";
+        cooling_coeff = 1 - ((1 - cooling_coeff) / 2);
     }
 
     return game;
