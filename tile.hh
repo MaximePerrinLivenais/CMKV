@@ -29,6 +29,8 @@ public:
 
     bool get_movable() const;
 
+    bool operator==(Tile& other) const;
+
 private:
     const char top;
     const char left;

@@ -86,3 +86,9 @@ bool Tile::get_movable() const
 {
     return movable;
 }
+
+bool Tile::operator==(Tile& other) const
+{
+    return top == other.top && left == other.left && right == other.right
+        && bottom == other.bottom && movable == other.movable;
+}

@@ -17,10 +17,14 @@ public:
     bool is_tile_movable(const size_t index) const;
     int cost() const;
 
+    void to_file(std::string file, bool shuffle = false,
+                 bool show_not_movable = false);
+
     void print() const;
     const std::vector<shared_tile> get_tiles() const;
 
     static shared_tetravex parse_from_file(const char* filepath);
+    static shared_tetravex generate_random_tetravex(size_t dimension);
 
 private:
     std::vector<shared_tile> tiles;
