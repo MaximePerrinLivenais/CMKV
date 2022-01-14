@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
     }
     // generate_tetravex_input();
     auto tetravex = Tetravex::parse_from_file(argv[1]);
-    auto solver = std::make_shared<Solver>(tetravex);
+    auto solver = std::make_shared<Solver>(std::move(tetravex));
     auto solved_tetravex = solver->solve();
 
     solved_tetravex->print();

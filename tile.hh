@@ -7,6 +7,7 @@
 class Tile;
 
 using shared_tile = std::shared_ptr<Tile>;
+using unique_tile = std::unique_ptr<Tile>;
 
 class Tile
 {
@@ -15,8 +16,8 @@ public:
 
     void print() const;
 
-    static shared_tile parse_from_line(const std::string& line);
-    static std::vector<shared_tile> parse_from_file(const char* filepath);
+    static unique_tile parse_from_line(const std::string& line);
+    static std::vector<unique_tile> parse_from_file(const char* filepath);
 
     std::string get_top_line() const;
     std::string get_center_line() const;

@@ -6,8 +6,8 @@
 
 #include "tetravex.hh"
 
-Solver::Solver(const shared_tetravex tetravex)
-    : game(tetravex)
+Solver::Solver(unique_tetravex tetravex)
+    : game(std::move(tetravex))
 {
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     random_generator_ = std::default_random_engine(seed);
@@ -18,7 +18,7 @@ Solver::Solver(const shared_tetravex tetravex)
     real_distribution_ = std::uniform_real_distribution<double>(0., 1.);
 }
 
-shared_tetravex Solver::generate_random_state(shared_tetravex game)
+void Solver::generate_random_state()
 {
     auto first_index = int_distribution_(random_generator_);
     while (!game->is_tile_movable(first_index))
@@ -28,7 +28,7 @@ shared_tetravex Solver::generate_random_state(shared_tetravex game)
     while (!game->is_tile_movable(second_index) || second_index == first_index)
         second_index = int_distribution_(random_generator_);
 
-    return game->swap_tiles(first_index, second_index);
+    game->swap_tiles(first_index, second_index);
 }
 
 double Solver::uniform_draw()
@@ -36,7 +36,7 @@ double Solver::uniform_draw()
     return real_distribution_(random_generator_);
 }
 
-bool Solver::is_temperature_uniform(double temperature, shared_tetravex game)
+bool Solver::is_temperature_uniform(double temperature)
 {
     double nb_change = 0;
     double nb_iteration = 100;
@@ -44,7 +44,7 @@ bool Solver::is_temperature_uniform(double temperature, shared_tetravex game)
     for (size_t i = 0; i < nb_iteration; i++)
     {
         auto cost1 = game->cost();
-        game = generate_random_state(game);
+        generate_random_state();
         auto cost2 = game->cost();
 
         if (std::exp(-std::abs(cost2 - cost1) / temperature) > uniform_draw())
@@ -63,7 +63,7 @@ double Solver::init_temperature()
 
     while (Tmax - Tmin > 0.1)
     {
-        if (is_temperature_uniform(T, game))
+        if (is_temperature_uniform(T))
             Tmax = T;
         else
             Tmin = T;
@@ -74,7 +74,7 @@ double Solver::init_temperature()
     return T;
 }
 
-shared_tetravex Solver::solve()
+unique_tetravex Solver::solve()
 {
     double base_temperature = init_temperature();
 
@@ -93,8 +93,8 @@ shared_tetravex Solver::solve()
         while (energy > 0 && count_no_change < 1000)
         {
             // std::cout << "========\n";
-            auto random_state = generate_random_state(game);
-            auto random_state_energy = random_state->cost();
+            generate_random_state();
+            auto random_state_energy = game->cost();
             auto trans_proba =
                 std::exp(-std::abs(random_state_energy - energy) / temperature);
 
@@ -109,13 +109,13 @@ shared_tetravex Solver::solve()
 
             if (random_state_energy < energy || trans_proba > draw)
             {
-                game = random_state;
                 energy = random_state_energy;
                 count_no_change = 0;
                 // std::cout << "accepted new state\n";
             }
             else
             {
+                game->revert_swap();
                 count_no_change++;
             }
 
@@ -126,5 +126,5 @@ shared_tetravex Solver::solve()
         cooling_coeff = 1 - ((1 - cooling_coeff) / 2);
     }
 
-    return game;
+    return std::move(game);
 }

@@ -17,7 +17,7 @@ void Tile::print() const
               << (char)(bottom + '0') << movable << '\n';
 }
 
-shared_tile Tile::parse_from_line(const std::string& line)
+unique_tile Tile::parse_from_line(const std::string& line)
 {
     char top = line[0];
     char left = line[1];
@@ -25,15 +25,15 @@ shared_tile Tile::parse_from_line(const std::string& line)
     char bottom = line[3];
     bool movable = line.length() <= 4;
 
-    return std::make_shared<Tile>(top, left, right, bottom, movable);
+    return std::make_unique<Tile>(top, left, right, bottom, movable);
 }
 
-std::vector<shared_tile> Tile::parse_from_file(const char* filepath)
+std::vector<unique_tile> Tile::parse_from_file(const char* filepath)
 {
     std::ifstream file_stream;
     file_stream.open(filepath);
 
-    auto vec = std::vector<shared_tile>();
+    auto vec = std::vector<unique_tile>();
 
     std::string line;
     while (std::getline(file_stream, line))

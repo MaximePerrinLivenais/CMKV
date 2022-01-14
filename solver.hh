@@ -7,18 +7,18 @@
 class Solver
 {
 public:
-    explicit Solver(const shared_tetravex tetravex);
+    explicit Solver(unique_tetravex tetravex);
 
-    shared_tetravex solve();
+    unique_tetravex solve();
 
 private:
-    shared_tetravex generate_random_state(shared_tetravex game);
-    bool is_temperature_uniform(double T, shared_tetravex game);
+    void generate_random_state();
+    bool is_temperature_uniform(double T);
     double uniform_draw();
     double init_temperature();
 
 private:
-    shared_tetravex game;
+    unique_tetravex game;
 
     std::uniform_int_distribution<int> int_distribution_;
     std::uniform_real_distribution<double> real_distribution_;
