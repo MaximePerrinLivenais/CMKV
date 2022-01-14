@@ -85,12 +85,11 @@ unique_tetravex Solver::solve()
 
     while (energy > 0)
     {
-        size_t count_no_change = 0;
         double temperature = base_temperature;
         std::cout << "cooling coef = " << cooling_coeff << "\n";
         std::cout << "current energy = " << energy << "\n";
 
-        while (energy > 0 && count_no_change < 1000)
+        while (energy > 0 && temperature > 0.00001)
         {
             // std::cout << "========\n";
             generate_random_state();
@@ -110,17 +109,16 @@ unique_tetravex Solver::solve()
             if (random_state_energy < energy || trans_proba > draw)
             {
                 energy = random_state_energy;
-                count_no_change = 0;
                 // std::cout << "accepted new state\n";
             }
             else
             {
                 game->revert_swap();
-                count_no_change++;
             }
 
             temperature *= cooling_coeff;
             // std::cout << "temperature = " << temperature << "\n";
+            // game->print();
         }
 
         cooling_coeff = 1 - ((1 - cooling_coeff) / 2);
