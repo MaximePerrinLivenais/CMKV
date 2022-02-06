@@ -14,6 +14,8 @@ class Tile
 public:
     explicit Tile(char top, char left, char right, char bottom, bool movable);
 
+    Tile(const Tile&) = default;
+
     void print() const;
 
     static unique_tile parse_from_line(const std::string& line);

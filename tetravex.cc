@@ -92,15 +92,22 @@ void Tetravex::to_file(std::string file, bool shuffle, bool show_not_movable)
             std::chrono::system_clock::now().time_since_epoch().count();
         auto random_generator = std::default_random_engine(seed);
 
+        std::vector<Tile> tiles_copy;
+        for (const auto& t : tiles)
+        {
+            tiles_copy.emplace_back(*t);
+        }
+
         std::shuffle(tiles.begin(), tiles.end(), random_generator);
 
         for (size_t i = 0; i < tiles.size(); i++)
         {
-            if (!tiles.at(i)->get_movable())
+            while (!tiles.at(i)->get_movable()
+                   && !(*tiles.at(i) == tiles_copy.at(i)))
             {
                 for (size_t j = 0; j < tiles.size(); j++)
                 {
-                    if (*tiles.at(i) == *tiles.at(j))
+                    if (*tiles.at(i) == tiles_copy.at(j))
                     {
                         std::iter_swap(tiles.begin() + i, tiles.begin() + j);
 
