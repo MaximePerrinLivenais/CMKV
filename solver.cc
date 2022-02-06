@@ -39,7 +39,7 @@ double Solver::uniform_draw()
 bool Solver::is_temperature_uniform(double temperature)
 {
     double nb_change = 0;
-    double nb_iteration = 100;
+    double nb_iteration = 200;
 
     for (size_t i = 0; i < nb_iteration; i++)
     {
@@ -61,7 +61,7 @@ double Solver::init_temperature()
 
     double T = (Tmax + Tmin) / 2;
 
-    while (Tmax - Tmin > 0.1)
+    while (Tmax - Tmin > 1)
     {
         if (is_temperature_uniform(T))
             Tmax = T;
@@ -71,14 +71,14 @@ double Solver::init_temperature()
         T = (Tmax + Tmin) / 2;
     }
 
-    return T;
+    return Tmax;
 }
 
 unique_tetravex Solver::solve()
 {
     double base_temperature = init_temperature();
 
-    std::cout << "initial temperature = " << base_temperature << "\n";
+    // std::cout << "initial temperature = " << base_temperature << "\n";
     double cooling_coeff = 0.50;
 
     auto energy = game->cost();
@@ -86,8 +86,9 @@ unique_tetravex Solver::solve()
     while (energy > 0)
     {
         double temperature = base_temperature;
-        std::cout << "cooling coef = " << cooling_coeff << "\n";
-        std::cout << "current energy = " << energy << "\n";
+        // std::cout << "cooling coef = " << cooling_coeff << "\n";
+        // std::cout << "current energy = " << energy << "\n";
+        // game->print();
 
         while (energy > 0 && temperature > 0.00001)
         {
@@ -117,8 +118,6 @@ unique_tetravex Solver::solve()
             }
 
             temperature *= cooling_coeff;
-            // std::cout << "temperature = " << temperature << "\n";
-            // game->print();
         }
 
         cooling_coeff = 1 - ((1 - cooling_coeff) / 2);

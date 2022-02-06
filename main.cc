@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
     auto solver = std::make_shared<Solver>(std::move(tetravex));
     auto solved_tetravex = solver->solve();
 
-    solved_tetravex->print();
+    // solved_tetravex->print();
 
     solved_tetravex->to_file(argv[2]);
 
