@@ -7,12 +7,16 @@ void generate_tetravex_input()
 {
     for (int dim = 2; dim < 7; dim++)
     {
-        for (int i = 0; i < 10; i++)
+        for (char i = 'a'; i < 'd'; i++)
         {
             auto tetravex = Tetravex::generate_random_tetravex(dim);
-            tetravex->to_file("out_dim" + std::to_string(dim) + "x"
-                                  + std::to_string(dim) + "_"
-                                  + std::to_string(i) + ".txt",
+
+            tetravex->to_file("radojicic" + std::to_string(dim)
+                                  + std::string(1, i) + "-ref.txt",
+                              false, false);
+
+            tetravex->to_file("radojicic" + std::to_string(dim)
+                                  + std::string(1, i) + ".txt",
                               true, true);
         }
     }
@@ -25,7 +29,6 @@ int main(int argc, char* argv[])
         std::cerr << "usage: " << argv[0] << " input output\n";
         return 1;
     }
-    // generate_tetravex_input();
     auto tetravex = Tetravex::parse_from_file(argv[1]);
     auto solver = std::make_shared<Solver>(std::move(tetravex));
     auto solved_tetravex = solver->solve();
@@ -33,4 +36,6 @@ int main(int argc, char* argv[])
     solved_tetravex->print();
 
     solved_tetravex->to_file(argv[2]);
+
+    // generate_tetravex_input();
 }
